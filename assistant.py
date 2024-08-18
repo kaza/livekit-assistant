@@ -1,5 +1,6 @@
 import asyncio
 from typing import Annotated
+from dotenv import load_dotenv
 
 from livekit import agents, rtc
 from livekit.agents import JobContext, WorkerOptions, cli, tokenize, tts
@@ -136,4 +137,5 @@ async def entrypoint(ctx: JobContext):
 
 
 if __name__ == "__main__":
+    load_dotenv()
     cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint))
