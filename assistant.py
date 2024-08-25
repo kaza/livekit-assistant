@@ -101,6 +101,7 @@ async def entrypoint(ctx: JobContext):
         content: list[str | ChatImage] = [text]
 
         if use_image and latest_image:
+            print("Appending image to answer")
             content.append(ChatImage(image=latest_image))
 
         chat_context.messages.append(ChatMessage(role="user", content=content))
@@ -151,7 +152,7 @@ async def entrypoint(ctx: JobContext):
             await asyncio.create_task(_answer(msg.message, use_image=False))
 
     @assistant.on("agent_stopped_speaking")
-    def on_function_calls_finished(*args):
+    def agent_stopped_speaking(*args):
         # print("agent stopped speaking")
         # print(*args)
         store_context(ctx.room.name, chat_context)

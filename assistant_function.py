@@ -8,8 +8,10 @@ class AssistantFunction(agents.llm.FunctionContext):
 
     @agents.llm.ai_callable(
         description=(
-                "Called when asked to evaluate something that would require vision capabilities,"
-                "for example, an image, video, or the webcam feed."
+                "Called when the user asks for any form of visual evaluation or mentions something that could involve "
+                "visual analysis, such as an image, video, webcam feed, or even questions about visibility or sight "
+                "capabilities"
+
         )
     )
     async def image(
@@ -21,12 +23,12 @@ class AssistantFunction(agents.llm.FunctionContext):
                 ),
             ],
     ):
-        print(f"Message triggering vision capabilities: {user_msg}")
+        print(f"###Message triggering vision capabilities: {user_msg}")
         return None
 
     @agents.llm.ai_callable(
         description=(
-                "This method should be called whenever the customer provides any feedback related to the store. "
+                "Called whenever the customer provides any feedback related to the store. "
                 "Feedback includes any preferences, suggestions, wishes, complaints, or comments about the store "
                 "experience. Examples include, but are not limited to: 'I prefer seeing the price upfront,' 'I don't "
                 "like the way this works,' 'It would be better if…,' 'I wish you had…,' etc. "

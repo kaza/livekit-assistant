@@ -1,6 +1,6 @@
 import json
 
-from livekit.agents.llm import FunctionCallInfo, ChatContext
+from livekit.agents.llm import FunctionCallInfo, ChatContext, ChatImage, ChatMessage
 
 
 def function_arg_info_to_dict(arg_info):
@@ -41,23 +41,37 @@ def debug_tool_calls(chat_message):
         print("tool_calls is None")
 
 
-def chat_message_to_dict(chat_message):
+def chat_image_to_dict(chat_image):
+    return {
+        "inference_width": chat_image.inference_width,
+        "inference_height": chat_image.inference_height
+    }
+
+
+def chat_message_to_dict(chat_message: ChatMessage):
     #debug_tool_calls(chat_message)
 
-    # Handle tool_calls if it's a list of FunctionCallInfo
-    if isinstance(chat_message.tool_calls, list):
-        tool_calls_serialized = [
-            function_call_info_to_dict(call) if isinstance(call, FunctionCallInfo) else call
-            for call in chat_message.tool_calls
-        ]
+    # Handle content if it includes ChatImage objects
+    content_serialized = []
+    if isinstance(chat_message.content, list):
+        for item in chat_message.content:
+            if isinstance(item, ChatImage):
+                content_serialized.append(chat_image_to_dict(item))
+            else:
+                content_serialized.append(item)
     else:
-        tool_calls_serialized = chat_message.tool_calls  # If it's something else, leave it as is
+        content_serialized = chat_message.content
 
     # Convert the ChatMessage object to a dictionary
     return {
-        key: tool_calls_serialized if key == 'tool_calls' else value
-        for key, value in chat_message.__dict__.items()
-        if value is not None  # Exclude fields that are None
+        "role": str(chat_message.role),  # Assuming ChatRole can be converted to a string
+        "name": chat_message.name,
+        "content": content_serialized,
+        "tool_calls": [
+            function_call_info_to_dict(call) if isinstance(call, FunctionCallInfo) else call
+            for call in chat_message.tool_calls
+        ] if chat_message.tool_calls else None,
+        "tool_call_id": chat_message.tool_call_id
     }
 
 
